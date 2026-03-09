@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>StudyPath Pro</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="StudyPath">
+<meta name="theme-color" content="#0f9e70">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--g:#0f9e70;--gd:#0a7a56;--gl:#e6f7f1;--gm:#b8e8d4;--bg:#f5f9f7;--wh:#fff;--text:#1a2e25;--muted:#7a9e8e;--border:#d8ece4;--r:14px;}
+body{font-family:'Plus Jakarta Sans','Noto Sans Devanagari',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body.dark{--bg:#0f1f18;--wh:#1a2e25;--text:#e8f5ef;--muted:#6aaa88;--border:#2a4a38;--gl:#1a3028;--gm:#2a4a38;}
+body.dark .hdr{background:linear-gradient(135deg,#0a5c40,#063d2a)!important;}
+body.dark .s-tab{background:#1a3028!important;color:#8ecfb0!important;}
+body.dark .s-tab.active{background:var(--g)!important;color:#fff!important;}
+body.dark .modal-box{background:#1a2e25!important;}
+.screen{display:none;position:fixed;inset:0;background:var(--bg);overflow-y:auto;z-index:1;padding-bottom:68px;}
+.screen.active{display:block;}
+.hdr{background:linear-gradient(135deg,#0f9e70,#0a7a56);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;box-shadow:0 2px 16px rgba(15,158,112,.28);}
+.hdr-back{background:rgba(255,255,255,.18);border:none;color:#fff;width:36px;height:36px;border-radius:10px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hdr-title{font-size:17px;font-weight:800;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hdr-icons{display:flex;gap:6px;flex-shrink:0;}
+.hdr-icon{background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:9px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--wh);border-top:1px solid var(--border);display:flex;z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.08);}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 4px 7px;cursor:pointer;font-size:10px;font-weight:600;color:var(--muted);gap:2px;border:none;background:transparent;}
+.ni.active{color:var(--g);}
+.ni-ico{font-size:20px;}
+/* SUBJECT BAR */
+.sub-bar-wrap{background:var(--wh);border-bottom:1px solid var(--border);position:sticky;top:58px;z-index:40;}
+.sub-bar{display:flex;overflow-x:auto;padding:9px 12px;gap:7px;scrollbar-width:none;align-items:center;}
+.sub-bar::-webkit-scrollbar{display:none;}
+.s-tab{padding:7px 13px;border-radius:24px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;background:var(--gl);border:1.5px solid var(--border);color:var(--muted);transition:.18s;flex-shrink:0;}
+.s-tab.active{background:var(--g);border-color:var(--g);color:#fff;box-shadow:0 3px 10px rgba(15,158,112,.3);}
+.s-cnt{font-size:10px;font-weight:700;margin-left:3px;padding:1px 5px;border-radius:8px;background:rgba(255,255,255,.25);}
+.s-tab:not(.active) .s-cnt{background:var(--gm);color:var(--gd);}
+.add-s-btn{width:32px;height:32px;border-radius:50%;border:2px dashed var(--g);background:transparent;color:var(--g);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.sec-hdr{padding:11px 14px 3px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:103px;z-index:35;}
+.sec-t{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;}
+.cnt-b{background:var(--gl);color:var(--gd);border-radius:12px;padding:2px 9px;font-size:11px;font-weight:700;}
+.tlist{padding:2px 12px 16px;}
+/* TOPIC CARD */
+.tc{background:var(--wh);border-radius:var(--r);padding:12px 12px 12px 16px;margin-bottom:8px;border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(15,158,112,.06);position:relative;overflow:hidden;transition:.18s;}
+.tc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--g);border-radius:4px 0 0 4px;}
+.tc.done-c::before{background:#22c55e;}
+.tc:active{transform:scale(.98);}
+.t-ico{width:38px;height:38px;border-radius:10px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.done-c .t-ico{background:#dcfce7;}
+.t-body{flex:1;min-width:0;}
+.t-name{font-size:14px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.t-stat{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--g);display:inline-block;flex-shrink:0;}
+.dot.f{background:#22c55e;}.dot.p{background:#f59e0b;}
+.t-pills{display:flex;gap:3px;margin-top:5px;flex-wrap:wrap;}
+.tp{padding:2px 6px;border-radius:6px;font-size:10px;font-weight:600;background:var(--gl);color:var(--gd);border:1px solid var(--gm);}
+.tp.td{background:#dcfce7;color:#166534;border-color:#86efac;}
+.rw{position:relative;width:36px;height:36px;flex-shrink:0;}
+.rw svg{transform:rotate(-90deg);}
+.rl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:var(--gd);}
+/* EMPTY */
+.empty{text-align:center;padding:50px 20px;color:var(--muted);}
+.empty-ico{font-size:46px;margin-bottom:10px;}
+.empty-t{font-size:16px;font-weight:700;color:var(--text);margin-bottom:5px;}
+/* FAB */
+.fab{position:fixed;right:18px;bottom:78px;width:54px;height:54px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--g),var(--gd));color:#fff;font-size:26px;cursor:pointer;box-shadow:0 6px 20px rgba(15,158,112,.45);z-index:200;display:flex;align-items:center;justify-content:center;transition:.22s cubic-bezier(.34,1.56,.64,1);}
+.fab:hover{transform:scale(1.1) rotate(90deg);}
+/* SEARCH */
+.srch-wrap{padding:9px 12px;background:var(--bg);position:sticky;top:58px;z-index:45;}
+.srch-box{display:flex;align-items:center;gap:8px;background:var(--wh);border:1.5px solid var(--border);border-radius:12px;padding:9px 13px;}
+.srch-box input{flex:1;border:none;outline:none;font-family:inherit;font-size:14px;background:transparent;color:var(--text);}
+.srch-box input::placeholder{color:var(--muted);}
+/* DASH */
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;}
+.dc{background:var(--wh);border-radius:14px;padding:14px;border:1px solid var(--border);box-shadow:0 1px 5px rgba(15,158,112,.06);}
+.dc.full{grid-column:1/-1;}
+.dl{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+.dv{font-size:26px;font-weight:800;color:var(--g);}
+.ds{font-size:12px;color:var(--muted);margin-top:3px;}
+.pt{background:var(--gl);border-radius:10px;height:10px;overflow:hidden;margin-top:8px;}
+.pf{height:100%;background:linear-gradient(90deg,var(--g),#22c55e);border-radius:10px;transition:width .5s;}
+.ti{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.ti:last-child{border-bottom:none;}
+/* SETTINGS */
+.sl{padding:12px;}
+.sr{background:var(--wh);border-radius:12px;padding:14px 16px;margin-bottom:8px;border:1px solid var(--border);display:flex;align-items:center;gap:12px;cursor:pointer;}
+.sr:active{opacity:.8;}
+.si{font-size:22px;width:30px;text-align:center;flex-shrink:0;}
+.sb{flex:1;}
+.st{font-size:14px;font-weight:600;}
+.ss{font-size:12px;color:var(--muted);margin-top:2px;}
+.tog{width:44px;height:26px;border-radius:13px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.tthumb{width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+/* MODAL */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.48);backdrop-filter:blur(5px);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
+.mbg.open{display:flex;}
+.mbox{background:var(--wh);border-radius:20px;padding:24px 20px 18px;width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:popIn .28s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.mt{font-size:16px;font-weight:800;margin-bottom:3px;}
+.msub{font-size:12px;color:var(--muted);margin-bottom:12px;}
+.mi{width:100%;padding:11px 13px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:15px;color:var(--text);outline:none;background:var(--wh);}
+.mi:focus{border-color:var(--g);}
+.mbtns{display:flex;gap:8px;margin-top:12px;}
+.mc{flex:1;padding:11px;border:2px solid var(--border);background:var(--wh);border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;}
+.mo{flex:2;padding:11px;background:var(--g);border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;color:#fff;cursor:pointer;}
+/* DETAIL */
+.dbody{padding:0 0 100px;}
+.dr{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);background:var(--wh);}
+.dr.cl{cursor:pointer;}
+.dr.cl:active{background:var(--gl);}
+.di{font-size:17px;width:24px;text-align:center;flex-shrink:0;padding-top:2px;}
+.dm{flex:1;min-width:0;}
+.dt{font-size:15px;font-weight:600;}
+.dsu{font-size:12px;color:var(--muted);margin-top:2px;}
+.drr{flex-shrink:0;display:flex;align-items:center;gap:6px;}
+.na{width:100%;border:none;outline:none;font-family:inherit;font-size:14px;color:var(--text);line-height:1.6;resize:none;background:transparent;min-height:60px;}
+.na::placeholder{color:var(--muted);}
+.stsec{background:var(--wh);border-bottom:1px solid var(--border);}
+.sth{display:flex;align-items:center;gap:12px;padding:13px 16px 10px;border-bottom:1px solid var(--border);}
+.sthi{font-size:17px;width:24px;text-align:center;flex-shrink:0;}
+.stht{font-size:15px;font-weight:600;flex:1;}
+.stadd{background:#222;color:#fff;border:none;width:26px;height:26px;border-radius:50%;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.str{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--gl);cursor:pointer;}
+.str:last-child{border-bottom:none;}
+.str:active{background:var(--gl);}
+.cc{width:22px;height:22px;border-radius:50%;border:2.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.18s;}
+.cc.on{background:var(--g);border-color:var(--g);}
+.cc.on::after{content:'✓';color:#fff;font-size:12px;font-weight:900;}
+.sl2{font-size:14px;font-weight:500;flex:1;}
+.sl2.done{text-decoration:line-through;color:var(--muted);}
+.priops{display:flex;gap:16px;padding:8px 0;}
+.popt{display:flex;align-items:center;gap:6px;cursor:pointer;}
+.prad{width:20px;height:20px;border-radius:50%;border:2.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:.18s;}
+.prad.sel{border-color:var(--g);}
+.prad.sel::after{content:'';width:9px;height:9px;border-radius:50%;background:var(--g);display:block;}
+.cr{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);background:var(--wh);cursor:pointer;}
+.cr:active{background:var(--gl);}
+.rc{width:26px;height:26px;border-radius:50%;border:2.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.18s;}
+.rc.on{background:var(--g);border-color:var(--g);}
+.rc.on::after{content:'✓';color:#fff;font-size:13px;font-weight:900;}
+.cb{flex:1;}
+.cht{font-size:14px;font-weight:600;}
+.chs{font-size:12px;color:var(--muted);margin-top:2px;}
+.tga{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding-top:6px;}
+.tgc{background:var(--gl);color:var(--gd);border:1px solid var(--gm);border-radius:20px;padding:3px 9px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;}
+.tx{cursor:pointer;color:var(--muted);font-size:13px;line-height:1;}
+.tinp{border:none;outline:none;font-family:inherit;font-size:12px;background:transparent;color:var(--text);min-width:80px;}
+.sfab{position:fixed;right:18px;bottom:78px;width:56px;height:56px;border-radius:50%;background:#f59e0b;border:none;color:#fff;font-size:24px;cursor:pointer;box-shadow:0 6px 20px rgba(245,158,11,.5);z-index:200;display:flex;align-items:center;justify-content:center;}
+/* MCQ */
+.mqc{background:var(--wh);border-radius:14px;padding:16px;margin:12px;border:1px solid var(--border);}
+.mqq{font-size:15px;font-weight:700;margin-bottom:14px;line-height:1.5;}
+.mop{padding:11px 14px;border:2px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:.18s;}
+.mop:hover{border-color:var(--g);background:var(--gl);}
+.mop.cor{background:#dcfce7;border-color:#22c55e;color:#166534;}
+.mop.wrg{background:#fee2e2;border-color:#ef4444;color:#991b1b;}
+/* ANALYTICS */
+.brow{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.blbl{font-size:11px;font-weight:600;color:var(--muted);width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.btrk{flex:1;background:var(--gl);border-radius:8px;height:18px;overflow:hidden;}
+.bfil{height:100%;background:linear-gradient(90deg,var(--g),#22c55e);border-radius:8px;transition:width .6s;}
+.bpct{font-size:11px;font-weight:700;color:var(--gd);width:32px;text-align:right;flex-shrink:0;}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
+
+// ===== ADVANCED FEATURES ADDON =====
+
+// ---- Topic Drag & Drop Sorting ----
+let dragIndex=null;
+document.addEventListener("dragstart",e=>{
+ if(e.target.classList.contains("tc")){
+   dragIndex=[...e.target.parentNode.children].indexOf(e.target);
+ }
+});
+document.addEventListener("dragover",e=>{
+ if(e.target.classList.contains("tc")) e.preventDefault();
+});
+document.addEventListener("drop",e=>{
+ if(e.target.classList.contains("tc") && dragIndex!==null){
+   const newIndex=[...e.target.parentNode.children].indexOf(e.target);
+   const arr=D.subjects[cSub].topics;
+   const item=arr.splice(dragIndex,1)[0];
+   arr.splice(newIndex,0,item);
+   save();
+   rTopics();
+   dragIndex=null;
+ }
+});
+
+// enable draggable
+const _oldRender=rTopics;
+rTopics=function(...a){
+ _oldRender(...a);
+ document.querySelectorAll(".tc").forEach((c,i)=>{
+   c.setAttribute("draggable","true");
+
+   // Edit/Delete icons
+   if(!c.querySelector(".act")){
+     const box=document.createElement("div");
+     box.className="act";
+     box.style.position="absolute";
+     box.style.right="8px";
+     box.style.top="6px";
+     box.style.fontSize="14px";
+     box.innerHTML="✏️ 🗑";
+     box.children[0]?.addEventListener("click",e=>{
+       e.stopPropagation();
+       const t=D.subjects[cSub].topics[i];
+       const n=prompt("Edit topic",t.name);
+       if(n){t.name=n;save();rTopics();}
+     });
+     box.children[1]?.addEventListener("click",e=>{
+       e.stopPropagation();
+       if(confirm("Delete topic?")){
+         D.subjects[cSub].topics.splice(i,1);
+         save();
+         rTopics();
+       }
+     });
+     c.appendChild(box);
+   }
+ });
+};
+
+// ---- Timer Quiz ----
+let timer=null,timeLeft=20;
+const _oldMCQ=rMCQ;
+rMCQ=function(){
+ _oldMCQ();
+ clearInterval(timer);
+ timeLeft=20;
+ const el=document.createElement("div");
+ el.id="quizTimer";
+ el.style.fontSize="12px";
+ el.style.marginBottom="6px";
+ document.getElementById("mcqCont").prepend(el);
+
+ timer=setInterval(()=>{
+   timeLeft--;
+   el.textContent="⏱ "+timeLeft+"s";
+   if(timeLeft<=0){
+     clearInterval(timer);
+     mIdx++;
+     rMCQ();
+   }
+ },1000);
+};
+
+// ---- Bookmark Questions ----
+let bookmarked=[];
+function bookmarkCurrent(){
+ if(MQ[mIdx]){
+   bookmarked.push(MQ[mIdx]);
+   alert("⭐ Bookmarked");
+ }
+}
+
+// inject bookmark button
+const _oldAns=ansMCQ;
+ansMCQ=function(i){
+ _oldAns(i);
+ const b=document.createElement("button");
+ b.textContent="⭐ Bookmark";
+ b.style.marginTop="10px";
+ b.onclick=bookmarkCurrent;
+ document.querySelector(".mqc")?.appendChild(b);
+};
+
+// ---- Google MCQ Search ----
+function googleSearchMCQ(){
+ const q=MQ[mIdx]?.q||"";
+ window.open("https://www.google.com/search?q="+encodeURIComponent(q+" mcq"),"_blank");
+}
+
+// ---- YouTube MCQ Import/Search ----
+function youtubeMCQ(){
+ const q=MQ[mIdx]?.q||"";
+ window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(q+" mcq explanation"),"_blank");
+}
+
+// ---- Simple AI Question Generator ----
+function aiGenerate(topic){
+ if(!topic) return;
+ MQ.push({
+  q:"AI Generated: "+topic+" के बारे में सही कथन चुनें",
+  o:["Option 1","Option 2","Option 3","Option 4"],
+  a:0
+ });
+}
+
+// ---- Auto Quiz Mode ----
+function autoQuiz(){
+ mIdx=0;
+ mSc=0;
+ rMCQ();
+}
+
+// ---- MCQ Analytics ----
+function mcqStats(){
+ const total=MQ.length;
+ const acc=total?Math.round((mSc/total)*100):0;
+ alert("Score: "+mSc+"/"+total+" ("+acc+"%)");
+}
+
+// ---- Spaced Repetition (basic) ----
+function spacedReview(){
+ const weak=MQ.slice(0,5);
+ MQ.push(...weak);
+}
+
+// ---- Cloud Backup (simple) ----
+function cloudBackup(){
+ const data=JSON.stringify(D);
+ localStorage.setItem("studypath_cloud_backup",data);
+ alert("Cloud backup saved (local demo)");
+}
+
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js">
+
+// ===== ADVANCED FEATURES ADDON =====
+
+// ---- Topic Drag & Drop Sorting ----
+let dragIndex=null;
+document.addEventListener("dragstart",e=>{
+ if(e.target.classList.contains("tc")){
+   dragIndex=[...e.target.parentNode.children].indexOf(e.target);
+ }
+});
+document.addEventListener("dragover",e=>{
+ if(e.target.classList.contains("tc")) e.preventDefault();
+});
+document.addEventListener("drop",e=>{
+ if(e.target.classList.contains("tc") && dragIndex!==null){
+   const newIndex=[...e.target.parentNode.children].indexOf(e.target);
+   const arr=D.subjects[cSub].topics;
+   const item=arr.splice(dragIndex,1)[0];
+   arr.splice(newIndex,0,item);
+   save();
+   rTopics();
+   dragIndex=null;
+ }
+});
+
+// enable draggable
+const _oldRender=rTopics;
+rTopics=function(...a){
+ _oldRender(...a);
+ document.querySelectorAll(".tc").forEach((c,i)=>{
+   c.setAttribute("draggable","true");
+
+   // Edit/Delete icons
+   if(!c.querySelector(".act")){
+     const box=document.createElement("div");
+     box.className="act";
+     box.style.position="absolute";
+     box.style.right="8px";
+     box.style.top="6px";
+     box.style.fontSize="14px";
+     box.innerHTML="✏️ 🗑";
+     box.children[0]?.addEventListener("click",e=>{
+       e.stopPropagation();
+       const t=D.subjects[cSub].topics[i];
+       const n=prompt("Edit topic",t.name);
+       if(n){t.name=n;save();rTopics();}
+     });
+     box.children[1]?.addEventListener("click",e=>{
+       e.stopPropagation();
+       if(confirm("Delete topic?")){
+         D.subjects[cSub].topics.splice(i,1);
+         save();
+         rTopics();
+       }
+     });
+     c.appendChild(box);
+   }
+ });
+};
+
+// ---- Timer Quiz ----
+let timer=null,timeLeft=20;
+const _oldMCQ=rMCQ;
+rMCQ=function(){
+ _oldMCQ();
+ clearInterval(timer);
+ timeLeft=20;
+ const el=document.createElement("div");
+ el.id="quizTimer";
+ el.style.fontSize="12px";
+ el.style.marginBottom="6px";
+ document.getElementById("mcqCont").prepend(el);
+
+ timer=setInterval(()=>{
+   timeLeft--;
+   el.textContent="⏱ "+timeLeft+"s";
+   if(timeLeft<=0){
+     clearInterval(timer);
+     mIdx++;
+     rMCQ();
+   }
+ },1000);
+};
+
+// ---- Bookmark Questions ----
+let bookmarked=[];
+function bookmarkCurrent(){
+ if(MQ[mIdx]){
+   bookmarked.push(MQ[mIdx]);
+   alert("⭐ Bookmarked");
+ }
+}
+
+// inject bookmark button
+const _oldAns=ansMCQ;
+ansMCQ=function(i){
+ _oldAns(i);
+ const b=document.createElement("button");
+ b.textContent="⭐ Bookmark";
+ b.style.marginTop="10px";
+ b.onclick=bookmarkCurrent;
+ document.querySelector(".mqc")?.appendChild(b);
+};
+
+// ---- Google MCQ Search ----
+function googleSearchMCQ(){
+ const q=MQ[mIdx]?.q||"";
+ window.open("https://www.google.com/search?q="+encodeURIComponent(q+" mcq"),"_blank");
+}
+
+// ---- YouTube MCQ Import/Search ----
+function youtubeMCQ(){
+ const q=MQ[mIdx]?.q||"";
+ window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(q+" mcq explanation"),"_blank");
+}
+
+// ---- Simple AI Question Generator ----
+function aiGenerate(topic){
+ if(!topic) return;
+ MQ.push({
+  q:"AI Generated: "+topic+" के बारे में सही कथन चुनें",
+  o:["Option 1","Option 2","Option 3","Option 4"],
+  a:0
+ });
+}
+
+// ---- Auto Quiz Mode ----
+function autoQuiz(){
+ mIdx=0;
+ mSc=0;
+ rMCQ();
+}
+
+// ---- MCQ Analytics ----
+function mcqStats(){
+ const total=MQ.length;
+ const acc=total?Math.round((mSc/total)*100):0;
+ alert("Score: "+mSc+"/"+total+" ("+acc+"%)");
+}
+
+// ---- Spaced Repetition (basic) ----
+function spacedReview(){
+ const weak=MQ.slice(0,5);
+ MQ.push(...weak);
+}
+
+// ---- Cloud Backup (simple) ----
+function cloudBackup(){
+ const data=JSON.stringify(D);
+ localStorage.setItem("studypath_cloud_backup",data);
+ alert("Cloud backup saved (local demo)");
+}
+
+
+</script>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="homeScreen">
+  <header class="hdr">
+    <div class="hdr-title">📚 StudyPath Pro</div>
+    <div class="hdr-icons">
+      <button class="hdr-icon" id="srchBtn">🔍</button>
+      <button class="hdr-icon" id="dmBtn">🌙</button>
+    </div>
+  </header>
+  <div id="srchWrap" style="display:none">
+    <div class="srch-wrap">
+      <div class="srch-box">
+        <span>🔍</span>
+        <input id="srchInp" placeholder="Subject या Topic खोजें...">
+        <span id="srchClr" style="cursor:pointer;color:var(--muted)">✕</span>
+      </div>
+    </div>
+  </div>
+  <div class="sub-bar-wrap">
+    <div class="sub-bar" id="subBar">
+      <button class="add-s-btn" id="addSubBtn">+</button>
+    </div>
+  </div>
+  <div class="sec-hdr"><span class="sec-t" id="secT">Topics</span><span class="cnt-b" id="cntB">0</span></div>
+  <div class="tlist" id="tlist"></div>
+  <button class="fab" id="addTFab">+</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="screen" id="dashScreen">
+  <header class="hdr"><div class="hdr-title">📊 Dashboard</div></header>
+  <div id="dashCont"></div>
+</div>
+
+<!-- ANALYTICS -->
+<div class="screen" id="anlScreen">
+  <header class="hdr"><div class="hdr-title">📈 Analytics</div></header>
+  <div style="padding:12px" id="anlCont"></div>
+</div>
+
+<!-- MCQ -->
+<div class="screen" id="mcqScreen">
+  <header class="hdr"><div class="hdr-title">🧠 MCQ Practice</div></header>
+  
+<div style="margin-bottom:12px;padding:10px;background:#eef;border-radius:10px">
+<b>PDF से MCQ बनाएं</b><br>
+<div style="margin-bottom:10px;padding:10px;background:#f5f5f5;border-radius:10px">
+<b>Daily 10 Questions</b><br>
+<select id="dailySubSel"></select>
+<button onclick="setDailySubject()" style="margin-left:6px">Set</button>
+<div style="font-size:12px;color:#555">हर दिन 10 प्रश्न आएंगे + reminder</div>
+</div>
+
+<input type="file" id="pdfMCQ" accept="application/pdf">
+<div style="font-size:12px;color:#555">PDF text पढ़कर basic MCQ बनाने की कोशिश करेगा</div>
+</div>
+
+<div style="margin-bottom:12px;padding:10px;background:#eef;border-radius:10px">
+<b>📷 Image / Book Photo → MCQ</b><br>
+<input type="file" id="imgMCQ" accept="image/*">
+<div style="font-size:12px;color:#555">Book photo डालें, text पढ़कर MCQ बनाएगा</div>
+</div>
+<div id="mcqCont" style="padding:12px"></div>
+</div>
+
+<!-- SETTINGS -->
+<div class="screen" id="setScreen">
+  <header class="hdr"><div class="hdr-title">⚙️ Settings</div></header>
+  <div class="sl" id="setList"></div>
+</div>
+
+<!-- DETAIL -->
+<div class="screen" id="detScreen">
+  <header class="hdr">
+    <button class="hdr-back" id="detBack">←</button>
+    <div class="hdr-title" id="detTitle"></div>
+    <div class="hdr-icons">
+      <button class="hdr-icon" id="delTopBtn">🗑</button>
+    </div>
+  </header>
+  <div class="dbody" id="detBody"></div>
+  <button class="sfab" id="savFab">✓</button>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav" id="bnav">
+  <button class="ni active" data-s="homeScreen"><span class="ni-ico">📚</span>Study</button>
+  <button class="ni" data-s="dashScreen"><span class="ni-ico">📊</span>Dashboard</button>
+  <button class="ni" data-s="anlScreen"><span class="ni-ico">📈</span>Analytics</button>
+  <button class="ni" data-s="mcqScreen"><span class="ni-ico">🧠</span>MCQ</button>
+  <button class="ni" data-s="setScreen"><span class="ni-ico">⚙️</span>Settings</button>
+</nav>
+
+<!-- MODAL -->
+<div class="mbg" id="mbg">
+  <div class="mbox">
+    <div class="mt" id="mT"></div>
+    <div class="msub" id="mS"></div>
+    <input class="mi" id="mI">
+    <div class="mbtns"><button class="mc" id="mCan">रद्द करें</button><button class="mo" id="mOk">जोड़ें ✓</button></div>
+  </div>
+</div>
+
+<script>
+// DEFAULT SUBJECTS & TOPICS
+const DEF={subjects:[
+  {name:'शिक्षा मनोविज्ञान',icon:'🧠',topics:['शिक्षा मनोविज्ञान की प्रकृति, कार्यक्षेत्र एवं उपयोगिता','सर्वांगीण विकास','अधिगम (Learning)','अभिप्रेरणा (Motivation)','बुद्धि (Intelligence)','संवेगात्मक बुद्धि (Emotional Intelligence)','सृजनात्मकता (Creativity)','व्यक्तित्व (Personality)','समायोजन एवं मानसिक स्वास्थ्य','व्यक्तिगत भेद एवं विशिष्ट बालक','21वीं सदी के कौशल का विकास']},
+  {name:'भूगोल',icon:'🌍',topics:['राजस्थान - भौगोलिक विशेषताएँ','राजस्थान - जलवायु','राजस्थान - अपवाह तंत्र (नदियाँ एवं झीलें)','राजस्थान - प्राकृतिक वनस्पति','राजस्थान - कृषि','राजस्थान - पशुधन एवं डेयरी विकास','राजस्थान - जनसंख्या','राजस्थान - जनजातियाँ','राजस्थान - उद्योग','राजस्थान - प्रमुख पर्यटन केंद्र','विश्व - महाद्वीप','विश्व - महासागर एवं उनकी विशेषताएँ','विश्व - वैश्विक पवन तंत्र','विश्व - पर्यावरणीय समस्याएँ','विश्व - प्रमुख मानव व्यवसाय','विश्व - जनसंख्या वितरण एवं प्रवास','भारत - भौतिक विशेषताएँ','भारत - मानसून तंत्र','भारत - अपवाह तंत्र','भारत - प्राकृतिक वनस्पति','भारत - जैव विविधता','भारत - ऊर्जा संसाधन']},
+  {name:'अर्थव्यवस्था',icon:'💰',topics:['कृषि में वृद्धि और विकास','भारत में उद्योग एवं सेवा क्षेत्र','भारत का विदेशी व्यापार (प्रवृत्तियाँ, संरचना, दिशा)','नवीनतम बजट']},
+  {name:'राजस्थान इतिहास',icon:'🏰',topics:['राजस्थान की प्राचीन सभ्यताएँ एवं संस्कृति','राजस्थान का इतिहास (18वीं शताब्दी तक)','दिल्ली सल्तनत के साथ संबंध (मेवाड़, रणथंभौर, जालौर)','राजस्थान और मुगल (सांगा, प्रताप, मानसिंह, पृथ्वीराज, रायसिंह)','राजस्थान में स्वतंत्रता संग्राम','प्रजामंडल आंदोलन','राजस्थान का एकीकरण','लोक देवता व देवियाँ','राजस्थान के संत','स्थापत्य (दुर्ग, महल, मंदिर एवं स्मारक)','राजस्थानी चित्रकला (विभिन्न शैलियाँ)','राजस्थान के प्रमुख मेले एवं त्यौहार','राजस्थान के प्रमुख रीति-रिवाज, वेशभूषा, आभूषण एवं हस्त कलाएँ','लोक संगीत, लोक नृत्य एवं प्रदर्शन कलाएँ','राजस्थानी भाषा व साहित्य','राजस्थान के प्रमुख व्यक्तित्व']},
+  {name:'राजनीति विज्ञान',icon:'⚖️',topics:['भारत का संवैधानिक विकास','संविधान सभा व अंबेडकर की भूमिका','प्रस्तावना','नागरिकता','मूल अधिकार','राज्य के नीति के निर्देशक तत्व','मूल कर्तव्य','संघीय कार्यपालिका (राष्ट्रपति, उपराष्ट्रपति, प्रधानमंत्री एवं मंत्रिपरिषद)','संघीय विधायिका (संसद : राज्यसभा व लोकसभा)','उच्चतम न्यायालय','भारत निर्वाचन आयोग','राज्यपाल','मुख्यमंत्री एवं मंत्रिपरिषद','राज्य विधानसभा','राजस्थान उच्च न्यायालय एवं अधीनस्थ न्यायालय','पंचायती राज','नगरीय स्वशासन','शासन सचिवालय','संभागीय आयुक्त व जिला प्रशासन','राजस्थान लोक सेवा आयोग','राजस्थान राज्य महिला आयोग','राजस्थान राज्य निर्वाचन आयोग','राजस्थान राज्य वित्त आयोग','लोकायुक्त','राजस्थान राज्य विधिक सेवा प्राधिकरण','भारत की विदेश नीति व नेहरू का योगदान','भारत के पड़ोसी देशों व प्रमुख शक्तियों के साथ संबंध','समकालीन मुद्दे और चुनौतियाँ']}
+]};
+
+const STD=[{key:'read',label:'📖 Reading'},{key:'rev',label:'🔄 Revision'},{key:'pyq',label:'❓ PYQs'},{key:'mcq',label:'🎯 MCQs'}];
+
+function mkTopic(name){return{name,notes:'',tags:[],dueDate:'',priority:'none',reminder:false,highlight:false,completed:false,completedAt:'',createdAt:fmtTime(new Date()),subtasks:STD.map(d=>({...d,done:false}))};}
+
+function initD(){
+  const r=localStorage.getItem('sp6');
+  if(r)return JSON.parse(r);
+  const d=JSON.parse(JSON.stringify(DEF));
+  d.subjects=d.subjects.map(s=>({...s,topics:s.topics.map(mkTopic)}));
+  d.streak=0;d.lastStudy='';d.dark=false;
+  localStorage.setItem('sp6',JSON.stringify(d));return d;
+}
+
+let D=initD(),cSub=0,cTop=null,pCb=null,cTags=[];
+function save(){localStorage.setItem('sp6',JSON.stringify(D));}
+function fmtTime(d){const h=d.getHours(),m=String(d.getMinutes()).padStart(2,'0');return(h%12||12)+':'+m+' '+(h<12?'AM':'PM');}
+function el(t,c){const e=document.createElement(t);if(c)e.className=c;return e;}
+
+// DARK MODE
+function applyDark(){document.body.classList.toggle('dark',D.dark);}
+applyDark();
+document.getElementById('dmBtn').onclick=()=>{D.dark=!D.dark;save();applyDark();if(document.getElementById('setScreen').classList.contains('active'))rSet();};
+
+// NAV
+document.querySelectorAll('.ni').forEach(b=>{
+  b.onclick=()=>{
+    const s=b.dataset.s;
+    document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+    document.getElementById(s).classList.add('active');
+    document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById('bnav').style.display='flex';
+    if(s==='dashScreen')rDash();
+    if(s==='anlScreen')rAnl();
+    if(s==='mcqScreen')rMCQ();
+    if(s==='setScreen')rSet();
+  };
+});
+function goHome(){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById('homeScreen').classList.add('active');document.querySelectorAll('.ni').forEach(x=>x.classList.toggle('active',x.dataset.s==='homeScreen'));document.getElementById('bnav').style.display='flex';}
+
+// PROMPT
+function showP(t,s,ph,ok,cb){document.getElementById('mT').textContent=t;document.getElementById('mS').textContent=s;document.getElementById('mI').placeholder=ph;document.getElementById('mI').value='';document.getElementById('mOk').textContent=ok+' ✓';pCb=cb;document.getElementById('mbg').classList.add('open');setTimeout(()=>document.getElementById('mI').focus(),120);}
+document.getElementById('mCan').onclick=()=>{document.getElementById('mbg').classList.remove('open');pCb=null;};
+document.getElementById('mOk').onclick=doPr;
+document.getElementById('mI').onkeydown=e=>{if(e.key==='Enter')doPr();if(e.key==='Escape'){document.getElementById('mbg').classList.remove('open');pCb=null;}};
+function doPr(){const v=document.getElementById('mI').value.trim();document.getElementById('mbg').classList.remove('open');if(pCb&&v)pCb(v);pCb=null;}
+
+// HOME
+function rAll(){rSubBar();rTopics();}
+
+function rSubBar(){
+  const bar=document.getElementById('subBar');
+  const ab=bar.querySelector('.add-s-btn');bar.innerHTML='';
+  D.subjects.forEach((s,i)=>{
+    const done=s.topics.filter(t=>t.subtasks.every(x=>x.done)).length;
+    const tab=el('div','s-tab'+(i===cSub?' active':''));
+    tab.innerHTML=(s.icon||'📚')+' '+s.name+`<span class="s-cnt">${done}/${s.topics.length}</span>`;
+    tab.onclick=()=>{cSub=i;rAll();};
+    tab.ondblclick = () => {
+      showP('विषय का नाम बदलें','नया नाम लिखें',s.name,'Save',n=>{
+        D.subjects[i].name = n;
+        save();
+        rAll();
+      });
+    };
+bar.appendChild(tab);
+  });
+  bar.appendChild(ab);
+}
+
+function rTopics(fil){
+  const list=document.getElementById('tlist');list.innerHTML='';
+  if(!D.subjects.length){list.innerHTML=`<div class="empty"><div class="empty-ico">📚</div><div class="empty-t">कोई विषय नहीं</div><p style="font-size:12px">+ बटन से जोड़ें</p></div>`;document.getElementById('secT').textContent='Subjects';document.getElementById('cntB').textContent='0';return;}
+  const s=D.subjects[cSub];
+  let tops=s.topics;
+  if(fil)tops=tops.filter(t=>t.name.toLowerCase().includes(fil.toLowerCase()));
+  document.getElementById('secT').textContent=(s.icon||'')+' '+s.name;
+  document.getElementById('cntB').textContent=tops.length+' topics';
+  if(!tops.length){list.innerHTML=`<div class="empty"><div class="empty-ico">📋</div><div class="empty-t">कोई टॉपिक नहीं</div><p style="font-size:12px">+ बटन से जोड़ें</p></div>`;return;}
+  tops.forEach(t=>{
+    const ri=s.topics.indexOf(t);
+    const done=t.subtasks.filter(x=>x.done).length;
+    const pct=Math.round(done/t.subtasks.length*100);const full=pct===100;
+    const R=14,C=2*Math.PI*R;
+    const card=el('div','tc'+(full?' done-c':''));
+    const pills=t.subtasks.map(st=>`<span class="tp${st.done?' td':''}">${st.label.split(' ')[0]}</span>`).join('');
+    const stat=full?`Completed${t.completedAt?' '+t.completedAt:''}`:done>0?`${done}/${t.subtasks.length} done`:'Not started';
+    card.innerHTML=`<div class="t-ico">${full?'✅':'📖'}</div><div class="t-body"><div class="t-name">${t.name}</div><div class="t-stat"><span class="dot ${full?'f':done>0?'p':''}"></span>${stat}</div><div class="t-pills">${pills}</div></div><div class="rw"><svg width="36" height="36"><circle cx="18" cy="18" r="${R}" fill="none" stroke="var(--gm)" stroke-width="3"/><circle cx="18" cy="18" r="${R}" fill="none" stroke="${full?'#22c55e':'var(--g)'}" stroke-width="3" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C-(pct/100)*C}"/></svg><div class="rl">${pct}%</div></div>`;
+    card.onclick=()=>openDet(ri);
+    card.ondblclick = (e)=>{
+      e.stopPropagation();
+      showP('टॉपिक का नाम बदलें','नया नाम लिखें',t.name,'Save',n=>{
+        D.subjects[cSub].topics[ri].name = n;
+        save();
+        rAll();
+      });
+    };
+list.appendChild(card);
+  });
+}
+
+// SEARCH
+document.getElementById('srchBtn').onclick=()=>{const w=document.getElementById('srchWrap');w.style.display=w.style.display==='none'?'block':'none';if(w.style.display==='block')document.getElementById('srchInp').focus();else{document.getElementById('srchInp').value='';rTopics();}};
+document.getElementById('srchInp').oninput=e=>rTopics(e.target.value);
+document.getElementById('srchClr').onclick=()=>{document.getElementById('srchInp').value='';rTopics();};
+
+// ADD
+document.getElementById('addSubBtn').onclick=()=>{showP('नया विषय जोड़ें','नाम लिखें','जैसे: Science, Math','जोड़ें',n=>{D.subjects.push({name:n,icon:'📚',topics:[]});cSub=D.subjects.length-1;save();rAll();});};
+document.getElementById('addTFab').onclick=()=>{
+  if(!D.subjects.length){showP('पहले विषय जोड़ें','','जैसे: Geography','जोड़ें',n=>{D.subjects.push({name:n,icon:'📚',topics:[]});cSub=0;save();rAll();});return;}
+  showP('नया टॉपिक जोड़ें','टॉपिक का नाम','जैसे: जलवायु, नदियां','जोड़ें',n=>{D.subjects[cSub].topics.push(mkTopic(n));updStreak();save();rAll();});
+};
+
+function updStreak(){const today=new Date().toDateString();if(D.lastStudy!==today){D.streak=(D.lastStudy===new Date(Date.now()-86400000).toDateString()?D.streak+1:1);D.lastStudy=today;}}
+
+// DETAIL
+function openDet(idx){
+  cTop=idx;const t=D.subjects[cSub].topics[idx];cTags=Array.isArray(t.tags)?[...t.tags]:[];
+  document.getElementById('detTitle').textContent=t.name;
+  buildDet(t);document.getElementById('bnav').style.display='none';
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+  document.getElementById('detScreen').classList.add('active');
+  document.getElementById('detScreen').scrollTop=0;
+}
+
+function buildDet(t){
+  const body=document.getElementById('detBody');body.innerHTML='';
+  // Notes
+  const nh=el('div','dr');nh.innerHTML=`<div class="di">📝</div><div class="dm"><div class="dt">Notes</div><div class="dsu">Tap to add notes</div></div>`;body.appendChild(nh);
+  const nr=el('div','dr');const ta=document.createElement('textarea');ta.className='na';ta.id='dN';ta.rows=3;ta.placeholder='यहाँ नोट्स लिखें...';ta.value=t.notes||'';nr.innerHTML='<div class="di"></div><div class="dm" style="flex:1"></div>';nr.querySelector('.dm').appendChild(ta);body.appendChild(nr);
+  // Attachment
+  const ar=el('div','dr cl');ar.innerHTML=`<div class="di">📷</div><div class="dm"><div class="dt">Attachment</div></div><div class="drr"><label style="cursor:pointer;font-size:20px">📎<input type="file" style="display:none" accept="image/*,application/pdf"></label></div>`;body.appendChild(ar);
+  // Subtasks
+  const ss=el('div','stsec');const sh=el('div','sth');sh.innerHTML=`<div class="sthi">✅</div><div class="stht">Sub Tasks</div>`;
+  const sa=el('button','stadd');sa.textContent='+';sa.onclick=()=>showP('नया Task','','जैसे: Write notes','जोड़ें',n=>{t.subtasks.push({key:'c'+Date.now(),label:'📌 '+n,done:false});save();rST(t);});
+  sh.appendChild(sa);ss.appendChild(sh);const sl=el('div','');sl.id='stL';ss.appendChild(sl);body.appendChild(ss);rST(t);
+  // List
+  const lr=el('div','dr');lr.innerHTML=`<div class="di" style="color:var(--g)">☰</div><div class="dm"><div class="dt">List</div><div class="dsu">${D.subjects[cSub].name}</div></div>`;body.appendChild(lr);
+  // Tags
+  const tgr=el('div','dr');tgr.style.flexDirection='column';tgr.style.alignItems='stretch';
+  const tgt=el('div','');tgt.style.cssText='display:flex;align-items:center;gap:12px;';tgt.innerHTML=`<div class="di">🏷</div><div class="dm"><div class="dt">Tags</div></div>`;
+  const tga=el('button','');tga.style.cssText='background:#222;color:#fff;border:none;width:26px;height:26px;border-radius:50%;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;';tga.textContent='+';tga.onclick=()=>{const i=document.getElementById('tI');if(i)i.focus();};tgt.appendChild(tga);tgr.appendChild(tgt);
+  const tgi=el('div','');tgi.style.cssText='padding:0 0 4px 36px;';tgi.innerHTML=`<div class="tga" id="tgA"></div>`;tgr.appendChild(tgi);body.appendChild(tgr);rTags(t);
+  // Due Date
+  const dr2=el('div','dr cl');dr2.innerHTML=`<div class="di">📅</div><div class="dm"><div class="dt">Due Date</div><div class="dsu" id="duS">${t.dueDate||'Set due date'}</div></div>`;
+  dr2.onclick=()=>{const i=document.createElement('input');i.type='date';i.style.cssText='position:fixed;opacity:0;z-index:9999;top:50%;left:50%;';i.value=t.dueDate||'';i.onchange=()=>{t.dueDate=i.value;const s=document.getElementById('duS');if(s)s.textContent=t.dueDate||'Set due date';save();try{document.body.removeChild(i);}catch(e){}};document.body.appendChild(i);i.focus();i.click();setTimeout(()=>{try{document.body.removeChild(i);}catch(e){}},5000);};body.appendChild(dr2);
+  // Reminder
+  const rr=el('div','dr cl');rr.innerHTML=`<div class="di" id="rIco">${t.reminder?'🔔':'🔕'}</div><div class="dm"><div class="dt">Reminder</div><div class="dsu" id="rSub">${t.reminder?'On':'Off'}</div></div>`;rr.onclick=()=>{t.reminder=!t.reminder;document.getElementById('rIco').textContent=t.reminder?'🔔':'🔕';document.getElementById('rSub').textContent=t.reminder?'On':'Off';save();};body.appendChild(rr);
+  // Priority
+  const pr=el('div','dr');pr.style.flexDirection='column';pr.style.alignItems='stretch';
+  const pt=el('div','');pt.style.cssText='display:flex;align-items:center;gap:12px;';pt.innerHTML=`<div class="di">🚩</div><div class="dm"><div class="dt">Priority <span style="font-size:12px;color:var(--muted)" id="pLbl">${t.priority==='none'?'None':t.priority}</span></div></div>`;pr.appendChild(pt);
+  const po=el('div','');po.style.cssText='padding:6px 0 8px 36px;';po.innerHTML='<div class="priops">'+[{v:'none',i:'⬜'},{v:'Low',i:'🟡'},{v:'Medium',i:'🟠'},{v:'High',i:'🔴'}].map(o=>`<div class="popt" onclick="setPri('${o.v}')"><div class="prad${t.priority===o.v?' sel':''}" id="pr_${o.v}"></div><span>${o.i}</span></div>`).join('')+'</div>';pr.appendChild(po);body.appendChild(pr);
+  // Highlight
+  const hl=el('div','cr');hl.innerHTML=`<div class="rc${t.highlight?' on':''}" id="hlC"></div><div class="cb"><div class="cht">★ Highlight</div><div class="chs">List में stand out करें</div></div><span style="font-size:20px">🎨</span>`;hl.onclick=()=>{t.highlight=!t.highlight;document.getElementById('hlC').className='rc'+(t.highlight?' on':'');save();};body.appendChild(hl);
+  // Completed
+  const dn=el('div','cr');dn.innerHTML=`<div class="rc${t.completed?' on':''}" id="dnC"></div><div class="cb"><div class="cht">Completed</div><div class="chs" id="dnS">${t.completed&&t.completedAt?'Completed '+t.completedAt:'Mark as complete'}</div></div>`;
+  dn.onclick=()=>{t.completed=!t.completed;if(t.completed&&!t.completedAt){t.completedAt=fmtTime(new Date());updStreak();}if(!t.completed)t.completedAt='';document.getElementById('dnC').className='rc'+(t.completed?' on':'');document.getElementById('dnS').textContent=t.completed&&t.completedAt?'Completed '+t.completedAt:'Mark as complete';save();};body.appendChild(dn);
+}
+
+function rST(t){
+  const list=document.getElementById('stL');if(!list)return;list.innerHTML='';
+  t.subtasks.forEach((st,i)=>{
+    const row=el('div','str');row.innerHTML=`<div class="cc${st.done?' on':''}" id="sc${i}"></div><div class="sl2${st.done?' done':''}" id="sl${i}">${st.label}</div>`;
+    row.onclick=()=>{st.done=!st.done;document.getElementById('sc'+i).className='cc'+(st.done?' on':'');document.getElementById('sl'+i).className='sl2'+(st.done?' done':'');const to=D.subjects[cSub].topics[cTop];if(to.subtasks.every(s=>s.done)&&!to.completedAt){to.completed=true;to.completedAt=fmtTime(new Date());updStreak();const dc=document.getElementById('dnC');const ds=document.getElementById('dnS');if(dc)dc.className='rc on';if(ds)ds.textContent='Completed '+to.completedAt;}save();};
+    list.appendChild(row);
+  });
+}
+
+function setPri(v){if(cTop===null)return;const t=D.subjects[cSub].topics[cTop];t.priority=v;['none','Low','Medium','High'].forEach(x=>{const e=document.getElementById('pr_'+x);if(e)e.className='prad'+(x===v?' sel':'');});const l=document.getElementById('pLbl');if(l)l.textContent=v==='none'?'None':v;save();}
+
+function rTags(t){
+  const area=document.getElementById('tgA');if(!area)return;area.innerHTML='';
+  cTags.forEach((tag,i)=>{const c=el('div','tgc');c.innerHTML=tag+`<span class="tx" onclick="rmTag(${i})">×</span>`;area.appendChild(c);});
+  const inp=el('input','tinp');inp.id='tI';inp.placeholder='Tag लिखें...';inp.onkeydown=e=>{if(e.key==='Enter'||e.key===','){e.preventDefault();const v=inp.value.trim().replace(',','');if(v&&!cTags.includes(v)){cTags.push(v);rTags(D.subjects[cSub].topics[cTop]);}else inp.value='';}};area.appendChild(inp);
+}
+function rmTag(i){cTags.splice(i,1);rTags(D.subjects[cSub].topics[cTop]);}
+
+function savBack(){if(cTop===null)return;const t=D.subjects[cSub].topics[cTop];const n=document.getElementById('dN');if(n)t.notes=n.value;t.tags=[...cTags];save();goHome();rAll();}
+document.getElementById('detBack').onclick=savBack;
+document.getElementById('savFab').onclick=savBack;
+document.getElementById('delTopBtn').onclick=()=>{if(!confirm('इस टॉपिक को delete करें?'))return;D.subjects[cSub].topics.splice(cTop,1);save();goHome();rAll();};
+
+// DASHBOARD
+function rDash(){
+  const tT=D.subjects.reduce((a,s)=>a+s.topics.length,0);
+  const tD=D.subjects.reduce((a,s)=>a+s.topics.filter(t=>t.subtasks.every(x=>x.done)).length,0);
+  const pct=tT?Math.round(tD/tT*100):0;
+  const pen=D.subjects.reduce((a,s)=>a+s.topics.filter(t=>!t.completed).length,0);
+  const today=D.subjects.reduce((a,s)=>a+s.topics.filter(t=>t.completed).length,0);
+  document.getElementById('dashCont').innerHTML=`<div class="dg">
+    <div class="dc"><div class="dl">Overall Progress</div><div class="dv">${pct}%</div><div class="pt"><div class="pf" style="width:${pct}%"></div></div><div class="ds">${tD}/${tT} topics</div></div>
+    <div class="dc"><div class="dl">Study Streak 🔥</div><div style="font-size:30px">🔥</div><div class="dv" style="font-size:22px">${D.streak} days</div><div class="ds">Keep going!</div></div>
+    <div class="dc"><div class="dl">Completed ✅</div><div class="dv" style="color:#22c55e">${today}</div><div class="ds">Topics done</div></div>
+    <div class="dc"><div class="dl">Pending ⏳</div><div class="dv" style="color:#ef4444">${pen}</div><div class="ds">Remaining</div></div>
+    <div class="dc full"><div class="dl">📅 Pending Topics</div>${D.subjects.slice(0,4).map(s=>s.topics.filter(t=>!t.completed).slice(0,2).map(t=>`<div class="ti"><div style="width:8px;height:8px;border-radius:50%;background:var(--g);flex-shrink:0"></div><div style="flex:1;font-size:12px">${t.name.substring(0,38)}${t.name.length>38?'...':''}</div><div style="font-size:10px;color:var(--muted);flex-shrink:0">${s.name}</div></div>`).join('')).join('')||'<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">🎉 सब complete है!</div>'}</div>
+  </div>`;
+}
+
+// ANALYTICS
+function rAnl(){
+  const tT=D.subjects.reduce((a,s)=>a+s.topics.length,0);
+  const tD=D.subjects.reduce((a,s)=>a+s.topics.filter(t=>t.subtasks.every(x=>x.done)).length,0);
+  const pct=tT?Math.round(tD/tT*100):0;
+  let h=`<div class="dc" style="margin-bottom:12px"><div class="dl">Total Progress</div><div class="pt" style="height:14px"><div class="pf" style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;margin-top:5px;font-size:12px;color:var(--muted)"><span>${tD} completed</span><span>${pct}%</span></div></div>`;
+  h+=`<div class="dc"><div class="dl">Subject-wise Progress</div><div style="margin-top:8px">`;
+  D.subjects.forEach(s=>{const d=s.topics.filter(t=>t.subtasks.every(x=>x.done)).length;const p=s.topics.length?Math.round(d/s.topics.length*100):0;h+=`<div class="brow"><div class="blbl">${s.icon||''} ${s.name}</div><div class="btrk"><div class="bfil" style="width:${p}%"></div></div><div class="bpct">${p}%</div></div>`;});
+  h+=`</div></div>`;
+  document.getElementById('anlCont').innerHTML=h;
+}
+
+// MCQ
+const MQ=[
+  {q:'भारतीय संविधान में कितने मूल अधिकार हैं?',o:['5','6','7','8'],a:1},
+  {q:'राजस्थान की सबसे लंबी नदी कौन सी है?',o:['बनास','चंबल','लूनी','माही'],a:1},
+  {q:'पंचायती राज व्यवस्था किस अनुच्छेद में है?',o:['अनुच्छेद 40','अनुच्छेद 243','अनुच्छेद 356','अनुच्छेद 370'],a:1},
+  {q:'अधिगम (Learning) का मुख्य तत्व क्या है?',o:['व्यवहार परिवर्तन','आनुवंशिकता','जन्मजात प्रवृत्ति','शारीरिक विकास'],a:0},
+  {q:'राजस्थान का सबसे बड़ा जिला (क्षेत्रफल) कौन सा है?',o:['जोधपुर','बाड़मेर','जैसलमेर','बीकानेर'],a:2},
+  {q:'भारत के प्रथम राष्ट्रपति कौन थे?',o:['जवाहरलाल नेहरू','डॉ. राजेंद्र प्रसाद','डॉ. राधाकृष्णन','सरदार पटेल'],a:1},
+  {q:'संवेगात्मक बुद्धि (EQ) किसने दी?',o:['Piaget','Goleman','Vygotsky','Skinner'],a:1},
+  {q:'राजस्थान का राज्य पशु कौन सा है?',o:['ऊंट','चिंकारा','बाघ','हिरण'],a:1},
+  {q:'भारतीय संविधान कब लागू हुआ?',o:['15 अगस्त 1947','26 जनवरी 1950','26 नवंबर 1949','2 अक्टूबर 1948'],a:1},
+  {q:'राजस्थान का उच्च न्यायालय कहाँ है?',o:['जयपुर','जोधपुर','अजमेर','कोटा'],a:1},
+];
+let mIdx=0,mSc=0,mAns=false;
+function rMCQ(){
+  if(mIdx>=MQ.length){document.getElementById('mcqCont').innerHTML=`<div class="mqc" style="text-align:center"><div style="font-size:48px;margin-bottom:12px">🏆</div><div style="font-size:20px;font-weight:800;margin-bottom:8px">Quiz Complete!</div><div style="font-size:16px;color:var(--muted)">Score: ${mSc}/${MQ.length}</div><div style="margin-top:14px;padding:12px;background:var(--gl);border-radius:10px;font-size:13px;color:var(--gd);font-weight:600">${Math.round(mSc/MQ.length*100)}% सही</div><button onclick="mIdx=0;mSc=0;rMCQ()" style="margin-top:14px;background:var(--g);color:#fff;border:none;padding:12px 24px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;width:100%">फिर से खेलें 🔄</button></div>`;return;}
+  const q=MQ[mIdx];mAns=false;
+  document.getElementById('mcqCont').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:12px;color:var(--muted);font-weight:600"><span>Q ${mIdx+1}/${MQ.length}</span><span>Score: ${mSc}</span></div><div class="pt" style="margin-bottom:14px"><div class="pf" style="width:${(mIdx/MQ.length)*100}%"></div></div><div class="mqc"><div class="mqq">${q.q}</div>${q.o.map((o,i)=>`<div class="mop" id="op${i}" onclick="ansMCQ(${i})">${o}</div>`).join('')}<div id="mqR" style="display:none;margin-top:12px;padding:10px;border-radius:10px;text-align:center;font-weight:700;font-size:14px"></div></div>`;
+}
+function ansMCQ(i){if(mAns)return;mAns=true;const q=MQ[mIdx];const c=i===q.a;if(c)mSc++;document.getElementById('op'+i).className='mop '+(c?'cor':'wrg');if(!c)document.getElementById('op'+q.a).className='mop cor';const r=document.getElementById('mqR');r.style.display='block';r.style.background=c?'#dcfce7':'#fee2e2';r.style.color=c?'#166534':'#991b1b';r.textContent=c?'✅ सही जवाब!':'❌ गलत! सही: '+q.o[q.a];setTimeout(()=>{mIdx++;rMCQ();},1800);}
+
+// SETTINGS
+function rSet(){
+  document.getElementById('setList').innerHTML=`
+  <div class="sr" onclick="togDark()"><div class="si">${D.dark?'☀️':'🌙'}</div><div class="sb"><div class="st">${D.dark?'Light Mode':'Dark Mode'}</div><div class="ss">Theme बदलें</div></div><div class="tog" style="background:${D.dark?'var(--g)':'var(--border)'}"><div class="tthumb" style="left:${D.dark?'21':'3'}px"></div></div></div>
+  <div class="sr" onclick="expD()"><div class="si">📤</div><div class="sb"><div class="st">Export Data</div><div class="ss">JSON backup download करें</div></div></div>
+  <div class="sr" onclick="document.getElementById('impF').click()"><div class="si">📥</div><div class="sb"><div class="st">Import Data</div><div class="ss">Backup restore करें</div></div></div>
+  <input type="file" id="impF" accept=".json" style="display:none" onchange="impD(event)">
+  <div class="sr" onclick="rstD()"><div class="si">🔄</div><div class="sb"><div class="st">Reset to Default</div><div class="ss">Default subjects restore करें</div></div></div>
+  <div class="sr"><div class="si">👨‍💻</div><div class="sb"><div class="st">Developer</div><div class="ss">StudyPath Pro v3.0 — RPSC Exam</div></div></div>
+  <div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Made with ❤️ for RPSC Exam 2026</div>`;
+}
+function togDark(){D.dark=!D.dark;save();applyDark();rSet();}
+function expD(){const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='studypath-backup.json';a.click();}
+function impD(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{D=JSON.parse(ev.target.result);save();rAll();alert('✅ Import हो गया!');}catch(err){alert('❌ Invalid file');}};r.readAsText(f);}
+function rstD(){if(!confirm('सभी progress delete होगी! Sure?'))return;localStorage.removeItem('sp6');D=initD();save();cSub=0;rAll();alert('✅ Reset हो गया!');}
+
+
+document.addEventListener("change", async function(e){
+ if(e.target && e.target.id==="pdfMCQ"){
+   const file=e.target.files[0];
+   if(!file) return;
+   const text=await file.text();
+   const lines=text.split(/\n|\./).filter(x=>x.trim().length>30).slice(0,5);
+   MQ.length=0;
+   lines.forEach((l,i)=>{
+     MQ.push({q:l.trim()+" ?",o:["Option A","Option B","Option C","Option D"],a:0});
+   });
+   mIdx=0; mSc=0;
+   rMCQ();
+   alert("PDF से demo MCQ बना दिए गए (edit करके use कर सकते हैं)");
+ }
+});
+
+
+// ---- PDF TO MCQ USING PDF.JS ----
+document.addEventListener("change", async function(e){
+ if(e.target && e.target.id==="pdfMCQ"){
+   const file=e.target.files[0];
+   if(!file) return;
+   const arrayBuffer = await file.arrayBuffer();
+   const pdf = await pdfjsLib.getDocument({data:arrayBuffer}).promise;
+   let text='';
+   for(let i=1;i<=Math.min(pdf.numPages,5);i++){
+     const page=await pdf.getPage(i);
+     const content=await page.getTextContent();
+     text+=content.items.map(it=>it.str).join(' ')+' ';
+   }
+   const parts=text.split(/[.?]/).filter(x=>x.trim().length>40).slice(0,10);
+   MQ.length=0;
+   parts.forEach(p=>{
+     MQ.push({
+       q:p.trim()+" ?",
+       o:["Option A","Option B","Option C","Option D"],
+       a:0
+     });
+   });
+   mIdx=0;mSc=0;
+   rMCQ();
+   alert("PDF से 10 demo MCQ generate हुए।");
+ }
+});
+
+// ---- DAILY QUESTION SYSTEM ----
+function fillDailySubjects(){
+ const sel=document.getElementById("dailySubSel");
+ if(!sel) return;
+ sel.innerHTML="";
+ D.subjects.forEach((s,i)=>{
+   const o=document.createElement("option");
+   o.value=i;
+   o.textContent=s.name;
+   sel.appendChild(o);
+ });
+}
+
+function setDailySubject(){
+ const sel=document.getElementById("dailySubSel");
+ localStorage.setItem("dailySubject",sel.value);
+ scheduleDaily();
+ alert("Daily subject set!");
+}
+
+function scheduleDaily(){
+ const subIndex=localStorage.getItem("dailySubject");
+ if(subIndex===null) return;
+ const s=D.subjects[subIndex];
+ if(!s || !s.topics.length) return;
+ MQ.length=0;
+ const shuffled=[...s.topics].sort(()=>0.5-Math.random()).slice(0,10);
+ shuffled.forEach(t=>{
+   MQ.push({
+     q:t.name+" से संबंधित सही कथन चुनें",
+     o:["Statement A","Statement B","Statement C","Statement D"],
+     a:0
+   });
+ });
+}
+
+// Notification reminder
+function dailyNotify(){
+ if(!("Notification" in window)) return;
+ if(Notification.permission!=="granted"){
+   Notification.requestPermission();
+ }else{
+   new Notification("StudyPath Daily MCQ",{
+     body:"आज के 10 प्रश्न तैयार हैं 📚"
+   });
+ }
+}
+
+// run every load
+fillDailySubjects();
+scheduleDaily();
+setTimeout(dailyNotify,4000);
+
+
+
+// ---- IMAGE OCR TO MCQ ----
+document.addEventListener("change", async function(e){
+ if(e.target && e.target.id==="imgMCQ"){
+   const file=e.target.files[0];
+   if(!file) return;
+   const imgURL = URL.createObjectURL(file);
+   alert("Image पढ़ा जा रहा है...");
+
+   const result = await Tesseract.recognize(imgURL,'eng+hin');
+   const text = result.data.text;
+
+   const parts=text.split(/[.?\n]/).filter(x=>x.trim().length>40).slice(0,10);
+
+   MQ.length=0;
+   parts.forEach(p=>{
+     MQ.push({
+       q:p.trim()+" ?",
+       o:["Option A","Option B","Option C","Option D"],
+       a:0
+     });
+   });
+
+   mIdx=0;
+   mSc=0;
+   rMCQ();
+
+   alert("Image से MCQ generate हो गए!");
+ }
+});
+
+// ---- GOOGLE QUESTION SEARCH ----
+function searchGoogle(topic){
+ const q=encodeURIComponent(topic+" mcq question");
+ window.open("https://www.google.com/search?q="+q,"_blank");
+}
+
+// INIT
+rAll();
+
+
+// ===== ADVANCED FEATURES ADDON =====
+
+// ---- Topic Drag & Drop Sorting ----
+let dragIndex=null;
+document.addEventListener("dragstart",e=>{
+ if(e.target.classList.contains("tc")){
+   dragIndex=[...e.target.parentNode.children].indexOf(e.target);
+ }
+});
+document.addEventListener("dragover",e=>{
+ if(e.target.classList.contains("tc")) e.preventDefault();
+});
+document.addEventListener("drop",e=>{
+ if(e.target.classList.contains("tc") && dragIndex!==null){
+   const newIndex=[...e.target.parentNode.children].indexOf(e.target);
+   const arr=D.subjects[cSub].topics;
+   const item=arr.splice(dragIndex,1)[0];
+   arr.splice(newIndex,0,item);
+   save();
+   rTopics();
+   dragIndex=null;
+ }
+});
+
+// enable draggable
+const _oldRender=rTopics;
+rTopics=function(...a){
+ _oldRender(...a);
+ document.querySelectorAll(".tc").forEach((c,i)=>{
+   c.setAttribute("draggable","true");
+
+   // Edit/Delete icons
+   if(!c.querySelector(".act")){
+     const box=document.createElement("div");
+     box.className="act";
+     box.style.position="absolute";
+     box.style.right="8px";
+     box.style.top="6px";
+     box.style.fontSize="14px";
+     box.innerHTML="✏️ 🗑";
+     box.children[0]?.addEventListener("click",e=>{
+       e.stopPropagation();
+       const t=D.subjects[cSub].topics[i];
+       const n=prompt("Edit topic",t.name);
+       if(n){t.name=n;save();rTopics();}
+     });
+     box.children[1]?.addEventListener("click",e=>{
+       e.stopPropagation();
+       if(confirm("Delete topic?")){
+         D.subjects[cSub].topics.splice(i,1);
+         save();
+         rTopics();
+       }
+     });
+     c.appendChild(box);
+   }
+ });
+};
+
+// ---- Timer Quiz ----
+let timer=null,timeLeft=20;
+const _oldMCQ=rMCQ;
+rMCQ=function(){
+ _oldMCQ();
+ clearInterval(timer);
+ timeLeft=20;
+ const el=document.createElement("div");
+ el.id="quizTimer";
+ el.style.fontSize="12px";
+ el.style.marginBottom="6px";
+ document.getElementById("mcqCont").prepend(el);
+
+ timer=setInterval(()=>{
+   timeLeft--;
+   el.textContent="⏱ "+timeLeft+"s";
+   if(timeLeft<=0){
+     clearInterval(timer);
+     mIdx++;
+     rMCQ();
+   }
+ },1000);
+};
+
+// ---- Bookmark Questions ----
+let bookmarked=[];
+function bookmarkCurrent(){
+ if(MQ[mIdx]){
+   bookmarked.push(MQ[mIdx]);
+   alert("⭐ Bookmarked");
+ }
+}
+
+// inject bookmark button
+const _oldAns=ansMCQ;
+ansMCQ=function(i){
+ _oldAns(i);
+ const b=document.createElement("button");
+ b.textContent="⭐ Bookmark";
+ b.style.marginTop="10px";
+ b.onclick=bookmarkCurrent;
+ document.querySelector(".mqc")?.appendChild(b);
+};
+
+// ---- Google MCQ Search ----
+function googleSearchMCQ(){
+ const q=MQ[mIdx]?.q||"";
+ window.open("https://www.google.com/search?q="+encodeURIComponent(q+" mcq"),"_blank");
+}
+
+// ---- YouTube MCQ Import/Search ----
+function youtubeMCQ(){
+ const q=MQ[mIdx]?.q||"";
+ window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(q+" mcq explanation"),"_blank");
+}
+
+// ---- Simple AI Question Generator ----
+function aiGenerate(topic){
+ if(!topic) return;
+ MQ.push({
+  q:"AI Generated: "+topic+" के बारे में सही कथन चुनें",
+  o:["Option 1","Option 2","Option 3","Option 4"],
+  a:0
+ });
+}
+
+// ---- Auto Quiz Mode ----
+function autoQuiz(){
+ mIdx=0;
+ mSc=0;
+ rMCQ();
+}
+
+// ---- MCQ Analytics ----
+function mcqStats(){
+ const total=MQ.length;
+ const acc=total?Math.round((mSc/total)*100):0;
+ alert("Score: "+mSc+"/"+total+" ("+acc+"%)");
+}
+
+// ---- Spaced Repetition (basic) ----
+function spacedReview(){
+ const weak=MQ.slice(0,5);
+ MQ.push(...weak);
+}
+
+// ---- Cloud Backup (simple) ----
+function cloudBackup(){
+ const data=JSON.stringify(D);
+ localStorage.setItem("studypath_cloud_backup",data);
+ alert("Cloud backup saved (local demo)");
+}
+
+
+</script>
+</body>
+</html>
